@@ -7,7 +7,7 @@
     <ProjectGuid>{525149E0-45CB-43AA-9E7E-1420ED1499F6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Northwind.Api.Test</RootNamespace>
+    <RootNamespace>Northwind.Api</RootNamespace>
     <AssemblyName>Northwind.Api.Test</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -70,6 +70,15 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\DetailLinkTest.cs" />
+    <Compile Include="Common\EditLinkTest.cs" />
+    <Compile Include="Common\GuardTest.cs" />
+    <Compile Include="Common\NextPageLinkTest.cs" />
+    <Compile Include="Common\PreviousPageLinkTest.cs" />
+    <Compile Include="Common\ResourceCollectionTest.cs">
+      <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
+    </Compile>
+    <Compile Include="Common\SelfLinkTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -79,6 +88,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Settings.StyleCop" />
   </ItemGroup>
