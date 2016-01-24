@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="frokonet.ch">
+// <copyright file="CustomerListModel.cs" company="frokonet.ch">
 //   Copyright (c) 2016
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,26 +16,17 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Northwind.Api
+namespace Northwind.Api.Customers
 {
-    using System;
+    using Northwind.Api.Common;
 
-    using Microsoft.Owin.Hosting;
-
-    class Program
+    public class CustomerListModel : Resource
     {
-        static void Main(string[] args)
-        {
-            var options = new StartOptions("http://+:6161")
-            {
-                ServerFactory = "Microsoft.Owin.Host.HttpListener"
-            };
-
-            using (WebApp.Start<Startup>(options))
-            {
-                Console.WriteLine("Press [enter] to quit...");
-                Console.ReadLine();
-            }
-        }
+        public string CustomerId { get; set; }
+        public string CompanyName { get; set; }
+        public string Address { get; set; }
+        public string City { get; set; }
+        public string PostalCode { get; set; }
+        public string Country { get; set; }
     }
 }

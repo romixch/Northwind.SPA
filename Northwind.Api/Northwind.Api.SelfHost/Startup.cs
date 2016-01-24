@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="frokonet.ch">
+// <copyright file="Startup.cs" company="frokonet.ch">
 //   Copyright (c) 2016
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,24 +18,18 @@
 
 namespace Northwind.Api
 {
-    using System;
+    using Ninject.Web.Common.OwinHost;
+    using Ninject.Web.WebApi.OwinHost;
 
-    using Microsoft.Owin.Hosting;
+    using Owin;
 
-    class Program
+    public class Startup
     {
-        static void Main(string[] args)
+        public void Configuration(IAppBuilder app)
         {
-            var options = new StartOptions("http://+:6161")
-            {
-                ServerFactory = "Microsoft.Owin.Host.HttpListener"
-            };
-
-            using (WebApp.Start<Startup>(options))
-            {
-                Console.WriteLine("Press [enter] to quit...");
-                Console.ReadLine();
-            }
+            app.UseNinjectMiddleware(ApiConfiguration.CreateKernel);
+            app.UseNinjectWebApi(ApiConfiguration.CreateHttpConfiguration());
+            app.UseWelcomePage();
         }
     }
 }

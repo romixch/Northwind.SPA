@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="frokonet.ch">
+// <copyright file="OwinApplication.cs" company="frokonet.ch">
 //   Copyright (c) 2016
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,23 +19,30 @@
 namespace Northwind.Api
 {
     using System;
+    using System.Net.Http;
 
     using Microsoft.Owin.Hosting;
 
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            var options = new StartOptions("http://+:6161")
-            {
-                ServerFactory = "Microsoft.Owin.Host.HttpListener"
-            };
+    using Owin;
 
-            using (WebApp.Start<Startup>(options))
-            {
-                Console.WriteLine("Press [enter] to quit...");
-                Console.ReadLine();
-            }
+    public class OwinApplication : IDisposable
+    {
+        private readonly IDisposable webApp;
+
+        public OwinApplication(int portNumber)
+        {
+            var startOptionUrl = $"http://+:{portNumber}";
+            var startOptions = new StartOptions(startOptionUrl) { ServerFactory = "Microsoft.Owin.Host.HttpListener" };
+
+            this.webApp = WebApp.Start<Startup>(startOptions);
+            this.Client = new HttpClient { BaseAddress = new Uri($"http://localhost:{portNumber}") };
+        }
+
+        public HttpClient Client { get; }
+
+        public void Dispose()
+        {
+            this.webApp.Dispose();
         }
     }
 }

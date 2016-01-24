@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="frokonet.ch">
+// <copyright file="ResourceExtensions.cs" company="frokonet.ch">
 //   Copyright (c) 2016
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,26 +16,23 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Northwind.Api
+namespace Northwind.Api.Common
 {
     using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    using Microsoft.Owin.Hosting;
-
-    class Program
+    public static class ResourceExtensions
     {
-        static void Main(string[] args)
+        public static IEnumerable<T> WithDetailLinks<T>(this IEnumerable<T> resources, Func<T, string> createLink) where T : Resource
         {
-            var options = new StartOptions("http://+:6161")
+            var resourceList = resources as T[] ?? resources.ToArray();
+            foreach (var resource in resourceList)
             {
-                ServerFactory = "Microsoft.Owin.Host.HttpListener"
-            };
-
-            using (WebApp.Start<Startup>(options))
-            {
-                Console.WriteLine("Press [enter] to quit...");
-                Console.ReadLine();
+                resource.AddLink(new DetailLink(createLink(resource), "Details"));
             }
+
+            return resourceList;
         }
     }
 }

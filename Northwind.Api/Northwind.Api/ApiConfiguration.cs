@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="frokonet.ch">
+// <copyright file="ApiConfiguration.cs" company="frokonet.ch">
 //   Copyright (c) 2016
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,24 +18,23 @@
 
 namespace Northwind.Api
 {
-    using System;
+    using System.Web.Http;
 
-    using Microsoft.Owin.Hosting;
+    using Ninject;
 
-    class Program
+    public static class ApiConfiguration
     {
-        static void Main(string[] args)
+        public static IKernel CreateKernel()
         {
-            var options = new StartOptions("http://+:6161")
-            {
-                ServerFactory = "Microsoft.Owin.Host.HttpListener"
-            };
+            return new StandardKernel(new ApiModule());
+        }
 
-            using (WebApp.Start<Startup>(options))
-            {
-                Console.WriteLine("Press [enter] to quit...");
-                Console.ReadLine();
-            }
+        public static HttpConfiguration CreateHttpConfiguration()
+        {
+            var configuration = new HttpConfiguration();
+            configuration.MapHttpAttributeRoutes();
+
+            return configuration;
         }
     }
 }

@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="frokonet.ch">
+// <copyright file="ICustomerQuery.cs" company="frokonet.ch">
 //   Copyright (c) 2016
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,26 +16,13 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Northwind.Api
+namespace Northwind.Api.Customers
 {
     using System;
+    using System.Threading.Tasks;
 
-    using Microsoft.Owin.Hosting;
-
-    class Program
+    public interface ICustomerQuery
     {
-        static void Main(string[] args)
-        {
-            var options = new StartOptions("http://+:6161")
-            {
-                ServerFactory = "Microsoft.Owin.Host.HttpListener"
-            };
-
-            using (WebApp.Start<Startup>(options))
-            {
-                Console.WriteLine("Press [enter] to quit...");
-                Console.ReadLine();
-            }
-        }
+        Task<CustomerListModels> FindAllAsync(Func<CustomerListModel, string> createDetailResource);
     }
 }

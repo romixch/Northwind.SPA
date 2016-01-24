@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="frokonet.ch">
+// <copyright file="DbConnectionFactory.cs" company="frokonet.ch">
 //   Copyright (c) 2016
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,24 +18,22 @@
 
 namespace Northwind.Api
 {
-    using System;
+    using System.Configuration;
+    using System.Data.SqlClient;
+    using System.Threading.Tasks;
 
-    using Microsoft.Owin.Hosting;
-
-    class Program
+    public class DbConnectionFactory : IDbConnectionFactory
     {
-        static void Main(string[] args)
+        private const string ConnectionStringName = "Northwind";
+        
+        public async Task<SqlConnection> CreateAsync()
         {
-            var options = new StartOptions("http://+:6161")
-            {
-                ServerFactory = "Microsoft.Owin.Host.HttpListener"
-            };
+            var connectionString = ConfigurationManager.ConnectionStrings[ConnectionStringName].ConnectionString;
+            var connection = new SqlConnection(connectionString);
 
-            using (WebApp.Start<Startup>(options))
-            {
-                Console.WriteLine("Press [enter] to quit...");
-                Console.ReadLine();
-            }
+            await connection.OpenAsync();
+
+            return connection;
         }
     }
 }

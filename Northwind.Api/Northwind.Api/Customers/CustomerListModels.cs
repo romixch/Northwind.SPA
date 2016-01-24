@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="frokonet.ch">
+// <copyright file="CustomerListModels.cs" company="frokonet.ch">
 //   Copyright (c) 2016
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,26 +16,28 @@
 // </copyright>
 //-------------------------------------------------------------------------------
 
-namespace Northwind.Api
+namespace Northwind.Api.Customers
 {
-    using System;
+    using System.Collections;
+    using System.Collections.Generic;
 
-    using Microsoft.Owin.Hosting;
-
-    class Program
+    public class CustomerListModels : IEnumerable<CustomerListModel>
     {
-        static void Main(string[] args)
-        {
-            var options = new StartOptions("http://+:6161")
-            {
-                ServerFactory = "Microsoft.Owin.Host.HttpListener"
-            };
+        private readonly IReadOnlyCollection<CustomerListModel> customers; 
 
-            using (WebApp.Start<Startup>(options))
-            {
-                Console.WriteLine("Press [enter] to quit...");
-                Console.ReadLine();
-            }
+        public CustomerListModels(IEnumerable<CustomerListModel> customers)
+        {
+            this.customers = new List<CustomerListModel>(customers);
+        }
+
+        public IEnumerator<CustomerListModel> GetEnumerator()
+        {
+            return this.customers.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.customers.GetEnumerator();
         }
     }
 }

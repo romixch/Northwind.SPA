@@ -1,5 +1,5 @@
 ﻿//-------------------------------------------------------------------------------
-// <copyright file="Program.cs" company="frokonet.ch">
+// <copyright file="ApiModule.cs" company="frokonet.ch">
 //   Copyright (c) 2016
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,24 +18,24 @@
 
 namespace Northwind.Api
 {
-    using System;
-
-    using Microsoft.Owin.Hosting;
-
-    class Program
+    using Ninject.Extensions.Conventions;
+    using Ninject.Modules;
+    
+    public class ApiModule : NinjectModule
     {
-        static void Main(string[] args)
+        public override void Load()
         {
-            var options = new StartOptions("http://+:6161")
-            {
-                ServerFactory = "Microsoft.Owin.Host.HttpListener"
-            };
+            this.Bind<IDbConnectionFactory>().To<DbConnectionFactory>().InSingletonScope();
 
-            using (WebApp.Start<Startup>(options))
-            {
-                Console.WriteLine("Press [enter] to quit...");
-                Console.ReadLine();
-            }
+            this.Bind(types => types.FromThisAssembly()
+                .SelectAllClasses()
+                .Where(t => t.Name.EndsWith("Query"))
+                .BindDefaultInterface());
+
+            this.Bind(types => types.FromThisAssembly()
+                .SelectAllClasses()
+                .Where(t => t.Name.EndsWith("Modifier"))
+                .BindDefaultInterface());
         }
     }
 }

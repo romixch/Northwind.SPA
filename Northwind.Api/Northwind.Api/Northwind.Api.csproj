@@ -81,6 +81,7 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http.Formatting, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
@@ -106,6 +107,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ApiConfiguration.cs" />
+    <Compile Include="ApiModule.cs" />
     <Compile Include="Common\DetailLink.cs" />
     <Compile Include="Common\EditLink.cs" />
     <Compile Include="Common\Guard.cs">
@@ -119,7 +122,15 @@
       <ExcludeFromStyleCop>True</ExcludeFromStyleCop>
     </Compile>
     <Compile Include="Common\ResourceCollection.cs" />
+    <Compile Include="Common\ResourceExtensions.cs" />
     <Compile Include="Common\SelfLink.cs" />
+    <Compile Include="Customers\CustomerController.cs" />
+    <Compile Include="Customers\CustomerListModel.cs" />
+    <Compile Include="Customers\CustomerListModels.cs" />
+    <Compile Include="Customers\CustomerQuery.cs" />
+    <Compile Include="Customers\ICustomerQuery.cs" />
+    <Compile Include="DbConnectionFactory.cs" />
+    <Compile Include="IDbConnectionFactory.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
