@@ -1,0 +1,24 @@
+{
+  "name": "Angular.SPA",
+  "description": "nothing special",
+  "main": "",
+  "authors": ["Patrick Ineichen"],
+  "license": "Apache-2.0",
+  "moduleType": [],
+  "homepage": "",
+  "dependencies": {
+    "angular": "^1.4.8",
+    "bootstrap": "^3.3.6",
+    "angular-route": "^1.4.8",
+    "angular-resource": "^1.4.8"
+  },
+  "overrides": {
+    "bootstrap": {
+      "main": [
+        "fonts/*.*",
+        "dist/css/bootstrap.css",
+        "dist/js/bootstrap.js"
+      ]
+    }
+  }
+}
