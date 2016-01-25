@@ -33,6 +33,7 @@ namespace Northwind.Api
         {
             var configuration = new HttpConfiguration();
             configuration.MapHttpAttributeRoutes();
+            configuration.EnableCors();
 
             return configuration;
         }
