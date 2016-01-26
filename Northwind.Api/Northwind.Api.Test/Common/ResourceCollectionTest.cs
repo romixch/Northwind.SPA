@@ -50,6 +50,7 @@ namespace Northwind.Api.Common
             testee.TotalCount.Should().Be(9);
             testee.TotalPages.Should().Be(1);
             testee.CurrentPage.Should().Be(0);
+            testee.PageSize.Should().Be(1000);
         }
 
         [Fact]
@@ -67,6 +68,7 @@ namespace Northwind.Api.Common
             testee.TotalCount.Should().Be(9);
             testee.TotalPages.Should().Be(3);
             testee.CurrentPage.Should().Be(1);
+            testee.PageSize.Should().Be(3);
         }
 
         [Fact]

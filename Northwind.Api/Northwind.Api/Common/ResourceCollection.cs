@@ -56,6 +56,7 @@ namespace Northwind.Api.Common
             this.TotalCount = enumerable.Count();
             this.TotalPages = (int)Math.Ceiling((double)this.TotalCount / pageSize);
             this.CurrentPage = page;
+            this.PageSize = pageSize;
             this.Results = enumerable.Skip(pageSize * page).Take(pageSize);
 
             this.AddPreviousPageLink(links, page, pageSize);
@@ -68,6 +69,8 @@ namespace Northwind.Api.Common
         public int TotalPages { get; }
 
         public int CurrentPage { get; }
+
+        public int PageSize { get; }
 
         public IEnumerable<T> Results { get;  }
 
