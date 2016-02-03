@@ -19,6 +19,8 @@
 namespace Northwind.Api.Customers
 {
     using System;
+    using System.Linq;
+    using System.Net.Sockets;
     using System.Threading.Tasks;
 
     using Dapper;
@@ -34,11 +36,50 @@ namespace Northwind.Api.Customers
             this.factory = factory;
         }
 
+        public async Task<int> GetCustomerCountAsync()
+        {
+            using (var connection = await this.factory.CreateAsync().ConfigureAwait(false))
+            {
+                var customerCount = await connection
+                    .QueryAsync<int>("SELECT COUNT(*) FROM dbo.Customers;")
+                    .ConfigureAwait(false);
+
+                return customerCount.Single();
+            }
+        }
+
         public async Task<CustomerListModels> FindAllAsync(Func<CustomerListModel, string> createDetailResource)
         {
-            using (var connection = await this.factory.CreateAsync())
+            using (var connection = await this.factory.CreateAsync().ConfigureAwait(false))
             {
-                var customers = await connection.QueryAsync<CustomerListModel>("SELECT * FROM dbo.Customers");
+                var customers = await connection
+                    .QueryAsync<CustomerListModel>("SELECT * FROM dbo.Customers;")
+                    .ConfigureAwait(false);
+
+                return new CustomerListModels(customers.WithDetailLinks(createDetailResource));
+            }
+        }
+
+        public async Task<CustomerListModels> FindAsync(Func<CustomerListModel, string> createDetailResource, int page, int pageSize)
+        {
+            const string Sql = @"
+            SELECT *
+            FROM
+            (
+                SELECT ROW_NUMBER() OVER(ORDER BY CustomerId) AS RowNum, *
+                FROM dbo.Customers
+            ) AS RowConstrainedResult
+            WHERE RowNum > @lowerBound AND RowNum <= @upperBound
+            ORDER BY RowNum;";
+
+            var lower = page * pageSize;
+            var upper = lower + pageSize;
+            using (var connection = await this.factory.CreateAsync().ConfigureAwait(false))
+            {
+                var customers = await connection
+                    .QueryAsync<CustomerListModel>(Sql, new { lowerBound = lower, upperBound = upper })
+                    .ConfigureAwait(false);
+
                 return new CustomerListModels(customers.WithDetailLinks(createDetailResource));
             }
         }

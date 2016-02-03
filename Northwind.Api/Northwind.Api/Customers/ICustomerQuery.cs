@@ -23,6 +23,10 @@ namespace Northwind.Api.Customers
 
     public interface ICustomerQuery
     {
+        Task<int> GetCustomerCountAsync();
+
         Task<CustomerListModels> FindAllAsync(Func<CustomerListModel, string> createDetailResource);
+
+        Task<CustomerListModels> FindAsync(Func<CustomerListModel, string> createDetailResource, int page, int pageSize);
     }
 }

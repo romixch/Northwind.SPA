@@ -46,12 +46,17 @@ namespace Northwind.Api.Customers
             var detailLink = new LinkCreator(this.Url, "CustomerDetails");
             var listLink = new LinkCreator(this.Url, "All");
 
-            var customers = await this.customerQuery.FindAllAsync(
-                c => detailLink.Create(new { customerId = c.CustomerId }));
-            
+            var totalCount = await this.customerQuery
+                .GetCustomerCountAsync()
+                .ConfigureAwait(false);
+
+            var customers = await this.customerQuery
+                .FindAsync(c => detailLink.Create(new { customerId = c.CustomerId }), page, pageSize)
+                .ConfigureAwait(false);
+
             return Request.CreateResponse(
-                HttpStatusCode.OK, 
-                new ResourceCollection<CustomerListModel>(listLink, customers, page, pageSize));
+                HttpStatusCode.OK,
+                new ResourceCollection<CustomerListModel>(listLink, customers, totalCount, page, pageSize));
         }
 
         [Route("{customerId}", Name = "CustomerDetails")]

@@ -18,9 +18,13 @@
 
 namespace Northwind.Api.Common
 {
+    using System.Linq;
+
     using FakeItEasy;
 
     using FluentAssertions;
+
+    using Newtonsoft.Json;
 
     using Xunit;
 
@@ -29,15 +33,24 @@ namespace Northwind.Api.Common
         [Fact]
         public void IsResource()
         {
-            var testee = CreateTestee();
+            var resources = CreateResources();
+            var testee = new ResourceCollection<MyResource>(resources.Length, 1, 0, resources, new Link[0]);
 
             testee.Should().BeAssignableTo<Resource>();
         }
 
         [Fact]
+        public void CanCreateFromJson()
+        {
+            var testee = CreateResourceCollectionFromJson();
+
+            testee.Should().NotBeNull();
+        }
+
+        [Fact]
         public void ExposesGivenResults()
         {
-            var testee = CreateTestee();
+            var testee = CreateResourceCollectionWithAllElements();
 
             testee.Results.Should().HaveCount(9);
         }
@@ -45,25 +58,25 @@ namespace Northwind.Api.Common
         [Fact]
         public void ExposesStatisticProperties_WhenAllResultsFitInOnePage()
         {
-            var testee = CreateTestee();
+            var testee = CreateResourceCollectionWithAllElements();
 
             testee.TotalCount.Should().Be(9);
             testee.TotalPages.Should().Be(1);
             testee.CurrentPage.Should().Be(0);
-            testee.PageSize.Should().Be(1000);
+            testee.PageSize.Should().Be(9);
         }
 
         [Fact]
         public void ContainsOnlySelfLink_WhenAllResultsFitInOnePage()
         {
-            var testee = CreateTestee();
+            var testee = CreateResourceCollectionWithAllElements();
             testee.Links.Should().HaveCount(1).And.Contain(l => l.Rel == "self");
         }
 
         [Fact]
         public void ExposesStatisticProperties_WhenNotAllResultsFitInOnePage()
         {
-            var testee = CreateTestee(1, 3);
+            var testee = CreatePagedResourceCollection(1, 3);
 
             testee.TotalCount.Should().Be(9);
             testee.TotalPages.Should().Be(3);
@@ -74,32 +87,57 @@ namespace Northwind.Api.Common
         [Fact]
         public void ContainsNextPageLink_WhenNotAllResultsFitInOnePageAndThereAreMorePages()
         {
-            var testee = CreateTestee(0, 5);
+            var testee = CreatePagedResourceCollection(0, 5);
             testee.Links.Should().HaveCount(2).And.Contain(l => l.Rel == "next");
         }
 
         [Fact]
         public void ContainsPreviousPageLink_WhenNotAllResultsFitInOnePageAndThisIsTheLastPage()
         {
-            var testee = CreateTestee(1, 5);
+            var testee = CreatePagedResourceCollection(1, 5);
             testee.Links.Should().HaveCount(2).And.Contain(l => l.Rel == "prev");
         }
 
         [Fact]
         public void ContainsLinksInBothDirections_WhenNotAllResultsFitInOnePageAndThereAreMorePagesAndThisIsNotTheLastPage()
         {
-            var testee = CreateTestee(1, 2);
+            var testee = CreatePagedResourceCollection(1, 2);
             testee.Links.Should().HaveCount(3)
                 .And.Contain(l => l.Rel == "prev")
                 .And.Contain(l => l.Rel == "next");
         }
 
-        private static ResourceCollection<MyResource> CreateTestee(int page = 0, int pageSize = 1000)
+        private static ResourceCollection<MyResource> CreateResourceCollectionFromJson()
+        {
+            return JsonConvert.DeserializeObject<ResourceCollection<MyResource>>(
+                TestResources.PagedCustomerJsonResponse);
+        }
+
+        private static ResourceCollection<MyResource> CreateResourceCollectionWithAllElements()
         {
             var linkCreator = A.Fake<ICreateLinks>();
             A.CallTo(() => linkCreator.Create(A<object>.Ignored)).Returns("link/to/resource/");
 
-            var resources = new[]
+            var resources = CreateResources();
+
+            return new ResourceCollection<MyResource>(linkCreator, resources);
+        }
+
+        private static ResourceCollection<MyResource> CreatePagedResourceCollection(int page, int pageSize)
+        {
+            var linkCreator = A.Fake<ICreateLinks>();
+            A.CallTo(() => linkCreator.Create(A<object>.Ignored)).Returns("link/to/resource/");
+
+            var allResources = CreateResources();
+            var pagedResources = CreateResources().Skip(pageSize * page).Take(pageSize);
+
+            return new ResourceCollection<MyResource>(
+                linkCreator, pagedResources, allResources.Length, page, pageSize);
+        }
+
+        private static MyResource[] CreateResources()
+        {
+            return new[]
             {
                 new MyResource(1),
                 new MyResource(2),
@@ -111,9 +149,7 @@ namespace Northwind.Api.Common
                 new MyResource(8),
                 new MyResource(9)
             };
-
-            return new ResourceCollection<MyResource>(linkCreator, resources, page, pageSize);
-        }
+        } 
 
         private class MyResource : Resource
         {

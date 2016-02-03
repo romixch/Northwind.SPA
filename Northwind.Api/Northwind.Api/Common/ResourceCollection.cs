@@ -39,7 +39,7 @@ namespace Northwind.Api.Common
             Link[] links)
         {
             this.TotalCount = totalCount;
-            this.TotalPages = TotalPages;
+            this.TotalPages = totalPages;
             this.CurrentPage = currentPage;
             this.Results = results;
             links.ToList().ForEach(this.AddLink);
@@ -47,17 +47,30 @@ namespace Northwind.Api.Common
 
         public ResourceCollection(
             ICreateLinks links,
-            IEnumerable<T> results, 
-            int page = DefaultPage, 
-            int pageSize = MaxPageSize)
+            IEnumerable<T> results)
         {
             var enumerable = results as T[] ?? results.ToArray();
 
-            this.TotalCount = enumerable.Count();
+            this.TotalCount = enumerable.Length;
+            this.TotalPages = 1;
+            this.CurrentPage = 0;
+            this.PageSize = enumerable.Length;
+            this.Results = enumerable;
+            this.AddSelfLink(links, this.CurrentPage, this.PageSize);
+        }
+
+        public ResourceCollection(
+            ICreateLinks links,
+            IEnumerable<T> results,
+            int totalCount,
+            int page = DefaultPage,
+            int pageSize = MaxPageSize)
+        {
+            this.TotalCount = totalCount;
             this.TotalPages = (int)Math.Ceiling((double)this.TotalCount / pageSize);
             this.CurrentPage = page;
             this.PageSize = pageSize;
-            this.Results = enumerable.Skip(pageSize * page).Take(pageSize);
+            this.Results = results;
 
             this.AddPreviousPageLink(links, page, pageSize);
             this.AddNextPageLink(links, page, pageSize);
