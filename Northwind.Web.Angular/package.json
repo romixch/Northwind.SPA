@@ -1,10 +1,10 @@
 {
-  "name": "Angular.SPA",
+  "name": "Northwind.SPA",
   "version": "1.0.0",
   "description": "nothing special",
   "author": "Patrick Ineichen",
   "license": "Apache-2.0",
-  "repository": "npm/npm",
+  "repository": "https://github.com/froko/Northwind.SPA",
   "devDependencies": {
     "browser-sync": "^2.10.0",
     "del": "^2.2.0",
