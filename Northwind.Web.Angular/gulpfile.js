@@ -7,6 +7,7 @@ var ts = require('gulp-typescript');
 var tslint = require('gulp-tslint');
 var sourcemaps = require('gulp-sourcemaps');
 var less = require('gulp-less');
+var babel = require('gulp-babel');
 
 var browserSync = require('browser-sync').create();
 var KarmaServer = require('karma').Server;
@@ -39,10 +40,11 @@ gulp.task('typescript', function() {
 		.pipe($.filter(['*.ts', '!*.test.ts']))
         .pipe(tslint())
         .pipe(tslint.report("verbose"))
-		.pipe(ts({ noImplicitAny: true, out: 'application.js' }))
+		.pipe(ts({ noImplicitAny: true, target: "es2015", out: 'application.js' }))
         .pipe(sourcemaps.init())
+        .pipe(babel({ presets: ['es2015'] }))
         .pipe($.uglify())
-        .pipe(sourcemaps.write('maps'))
+        .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest(directories.destination));
 });
 
@@ -52,7 +54,7 @@ gulp.task('js', function() {
 		.pipe($.concat('main.js'))
         .pipe(sourcemaps.init())
 		.pipe($.uglify())
-        .pipe(sourcemaps.write('maps'))
+        .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest(directories.destination));
 });
 
@@ -68,7 +70,7 @@ gulp.task('css', function() {
 		.pipe($.concat('main.css'))
         .pipe(sourcemaps.init())
 		.pipe($.cssnano())
-        .pipe(sourcemaps.write('maps'))
+        .pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest(directories.destination));
 });
 

@@ -2,7 +2,9 @@
   "name": "Northwind.SPA",
   "description": "nothing special",
   "main": "",
-  "authors": ["Patrick Ineichen"],
+  "authors": [
+    "Patrick Ineichen"
+  ],
   "license": "Apache-2.0",
   "moduleType": [],
   "homepage": "",
