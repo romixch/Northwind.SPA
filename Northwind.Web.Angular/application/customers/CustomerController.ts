@@ -11,7 +11,7 @@ module Northwind.Customers {
         selectedNumberOfEntries: number;
         pageSize: number;
         customers: CustomerListModel[];
-        links: Link[];
+        links: Link[] = [];
         pages: Pagination[] = [];
         
         static $inject = ["customerResourceFactory"];
