@@ -41,10 +41,10 @@ gulp.task('typescript', function() {
         .pipe(tslint())
         .pipe(tslint.report("verbose"))
 		.pipe(ts({ noImplicitAny: true, target: "es2015", out: 'application.js' }))
-        .pipe(sourcemaps.init())
+        //.pipe(sourcemaps.init())
         .pipe(babel({ presets: ['es2015'] }))
-        .pipe($.uglify())
-        .pipe(sourcemaps.write('.'))
+        //.pipe($.uglify())
+        //.pipe(sourcemaps.write('.'))
 		.pipe(gulp.dest(directories.destination));
 });
 
