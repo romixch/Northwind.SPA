@@ -8,6 +8,7 @@ var tslint = require('gulp-tslint');
 var sourcemaps = require('gulp-sourcemaps');
 var less = require('gulp-less');
 var babel = require('gulp-babel');
+var proxyMiddleware = require('http-proxy-middleware');
 
 var browserSync = require('browser-sync').create();
 var KarmaServer = require('karma').Server;
@@ -29,6 +30,8 @@ var directories = {
         bootstrap : './bower_components/bootstrap/dist/css/'
     }
 }
+
+var apiProxy = proxyMiddleware('/api', {target: 'http://192.168.2.49:6262', changeOrigin: true});
 
 //-------------------------------------------------------------------------------------------------
 // tasks
@@ -90,14 +93,18 @@ gulp.task('html', ['typescript', 'js', 'less', 'css', 'fonts'], function () {
 });
 
 gulp.task('show', ['html'], function () {
-    browserSync.init({ server: directories.destination });
+    var config = { server: directories.destination };
+    config.server.middleware = apiProxy;
+    browserSync.init(config);
     
     gulp.watch(directories.application + '**/*.ts', ['typescript']).on('change', browserSync.reload);
     gulp.watch([directories.application + '**/*.html', 'index.html'], ['html']).on('change', browserSync.reload);
 });
 
 gulp.task('serve', ['html', 'test'], function () {
-    browserSync.init({ server: directories.destination });
+    var config = { server: directories.destination };
+    config.server.middleware = apiProxy;
+    browserSync.init(config);
 
 	new KarmaServer({ configFile: __dirname + '/karma.conf.js', singleRun: false, autoWatch: true }).start();
 	
