@@ -31,7 +31,7 @@ var directories = {
     }
 }
 
-var apiProxy = proxyMiddleware('/api', {target: 'http://192.168.2.49:6262', changeOrigin: true});
+var apiProxy = proxyMiddleware('/api/**', {target: 'http://192.168.2.49:6262', changeOrigin: true});
 
 //-------------------------------------------------------------------------------------------------
 // tasks
@@ -93,8 +93,12 @@ gulp.task('html', ['typescript', 'js', 'less', 'css', 'fonts'], function () {
 });
 
 gulp.task('show', ['html'], function () {
-    var config = { server: directories.destination };
-    config.server.middleware = apiProxy;
+    var config = { 
+      server: {
+        baseDir: directories.destination,
+        middleware: apiProxy
+      }
+    };
     browserSync.init(config);
     
     gulp.watch(directories.application + '**/*.ts', ['typescript']).on('change', browserSync.reload);
@@ -102,8 +106,12 @@ gulp.task('show', ['html'], function () {
 });
 
 gulp.task('serve', ['html', 'test'], function () {
-    var config = { server: directories.destination };
-    config.server.middleware = apiProxy;
+    var config = { 
+      server: {
+        baseDir: directories.destination,
+        middleware: apiProxy
+      }
+    };
     browserSync.init(config);
 
 	new KarmaServer({ configFile: __dirname + '/karma.conf.js', singleRun: false, autoWatch: true }).start();

@@ -19,7 +19,7 @@ module Northwind.Customers {
         }
         
         getCustomerListResource = (): ng.resource.IResourceClass<ICustomerListResource> => {
-            return this.$resource("http://localhost:3000/api/customers");
+            return this.$resource("/api/customers");
         }
         
         getCustomerListResourceWithUri = (uri: string): ng.resource.IResourceClass<ICustomerListResource> => {
@@ -27,7 +27,7 @@ module Northwind.Customers {
         }
         
         getPagedCustomerListResource = (page: number, pageSize: number): ng.resource.IResourceClass<ICustomerListResource> => {
-            return this.$resource("http://localhost:3000/api/customers?page=" + page + "&pageSize=" + pageSize);
+            return this.$resource("/api/customers?page=" + page + "&pageSize=" + pageSize);
         }
     }
 }
